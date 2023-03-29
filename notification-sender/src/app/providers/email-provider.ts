@@ -1,3 +1,3 @@
 export abstract class EmailProvider {
-  abstract sendEmail(title: string, content: string): Promise<void>;
+  abstract sendEmail(content: string, to: string): Promise<void>;
 }

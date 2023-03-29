@@ -1,8 +1,13 @@
-import { EmailProvider } from '../providers/email-provider';
+import { Notification } from '../entities/notification';
 
-export class SendEmail {
+import { EmailProvider } from '../providers/email-provider';
+import { SendNotificationProvider } from '../providers/send-notification-provider';
+
+export class SendEmail implements SendNotificationProvider {
   constructor(private readonly emailProvider: EmailProvider) { }
-  run(title: string, content: string) {
-    this.emailProvider.sendEmail(title, content);
+  async send(notification: Notification) {
+    this.emailProvider.sendEmail(
+      notification.content.value, notification.recipientEmail
+    );
   }
 }

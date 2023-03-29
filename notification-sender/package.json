@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "start": "ts-node index.ts"
   },
   "keywords": [],
@@ -14,9 +14,11 @@
     "@types/amqplib": "^0.10.1",
     "@types/node": "^18.15.11",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "vitest": "^0.29.8"
   },
   "dependencies": {
-    "amqplib": "^0.10.3"
+    "amqplib": "^0.10.3",
+    "moment": "^2.29.4"
   }
 }

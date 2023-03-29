@@ -1,4 +1,6 @@
-import { Notification } from './src/app/entities/notification';
+import { SendEmail } from './src/app/services/send-email';
+import { ElasticEmailProvider } from './src/infra/elastic-email/elastic-email-provider';
+import { CreateNotificationConsumer } from './src/infra/rabbitmq/consumers/create-notification-consumer';
 import { getRabbitMqConnection } from './src/infra/rabbitmq/rabbitmq-connection';
 
 async function main() {
@@ -6,13 +8,12 @@ async function main() {
 
   const notificationCreatedChannel = await rabbitMqConnection.createChannel();
   await notificationCreatedChannel.assertQueue("create-notification");
-  notificationCreatedChannel.consume("create-notification", (msg) => {
-    if(msg) {
-      const msgRawContent = msg.content.toString();
-      const parsedMsg = Notification.fromRawJson(msgRawContent);
-      console.log(parsedMsg);
-      notificationCreatedChannel.ack(msg);
-    }
-  });
+  const emailProvider = new ElasticEmailProvider();
+  const sendNotificationProvider = new SendEmail(emailProvider);
+  const createNotificationConsumer = new CreateNotificationConsumer(
+    notificationCreatedChannel,
+    sendNotificationProvider
+  );
+  notificationCreatedChannel.consume("create-notification", createNotificationConsumer.consume);
 }
 main();

@@ -10,6 +10,7 @@ export interface NotificationProps {
   readAt?: Date | null;
   createdAt: Date;
   canceledAt?: Date;
+  recipientEmail: string;
 }
 
 export class Notification {
@@ -30,10 +31,9 @@ export class Notification {
   static fromRawJson(raw: string) {
     const parsed: IParsedJsonNotification = JSON.parse(raw);
     return new Notification({
+      ...parsed,
+      createdAt: parsed.createdAt ? new Date(parsed.createdAt) : undefined,
       content: new Content(parsed.content),
-      recipientId: parsed.recipientId,
-      category: parsed.category,
-      createdAt: parsed.createdAt
     });
   }
 
@@ -73,6 +73,10 @@ export class Notification {
     return this._id;
   }
 
+  get recipientEmail() {
+    return this.props.recipientEmail;
+  }
+
   public cancel() {
     this.props.canceledAt = new Date();
   }
@@ -86,5 +90,8 @@ export interface IParsedJsonNotification {
   content: string;
   category: string;
   recipientId: string;
-  createdAt: Date;
+  createdAt?: Date;
+  readAt?: Date;
+  canceledAt?: Date;
+  recipientEmail: string;
 }
