@@ -3,3 +3,10 @@ services:
     build: ./notifications-manager
     ports:
       - 3000:3000
+    depends_on:
+      - queue
+  queue:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+    restart: always
