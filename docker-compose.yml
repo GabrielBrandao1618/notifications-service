@@ -1,0 +1,5 @@
+services:
+  notificaion_manager:
+    build: ./notifications-manager
+    ports:
+      - 3000:3000
