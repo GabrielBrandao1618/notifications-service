@@ -1,0 +1,24 @@
+services:
+  notificaion_manager:
+    build: ./notifications-manager
+    ports:
+      - 3001:3000
+    depends_on:
+      - queue
+    env_file:
+      - .env.dev
+  mailcatcher:
+    image: sj26/mailcatcher
+    container_name: mail_catcher
+    expose:
+      - 1025
+      - 1080
+    ports:
+      - 1025:1025
+      - 1080:1080
+  queue:
+    image: rabbitmq
+    container_name: notifications_service_queue
+    ports:
+      - 5672:5672
+    restart: always
