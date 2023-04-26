@@ -6,7 +6,17 @@ services:
     depends_on:
       - queue
   queue:
-    image: rabbitmq
+    image: rabbitmq:3-management
     ports:
       - 5672:5672
-    restart: always
+      - 15672:15672
+
+  mailcatcher:
+    image: sj26/mailcatcher
+    container_name: mail_catcher
+    expose:
+      - 1025
+      - 1080
+    ports:
+      - 1025:1025
+      - 1080:1080

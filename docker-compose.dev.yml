@@ -2,7 +2,7 @@ services:
   notificaion_manager:
     build: ./notifications-manager
     ports:
-      - 3001:3000
+      - 3000:3000
     depends_on:
       - queue
     env_file:
@@ -17,8 +17,8 @@ services:
       - 1025:1025
       - 1080:1080
   queue:
-    image: rabbitmq
+    image: rabbitmq:3-management
     container_name: notifications_service_queue
     ports:
       - 5672:5672
-    restart: always
+      - 15672:15672
