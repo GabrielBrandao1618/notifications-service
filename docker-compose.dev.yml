@@ -5,12 +5,8 @@ services:
       - 3000:3000
     depends_on:
       - queue
-  queue:
-    image: rabbitmq:3-management
-    ports:
-      - 5672:5672
-      - 15672:15672
-
+    env_file:
+      - .env.dev
   mailcatcher:
     image: sj26/mailcatcher
     container_name: mail_catcher
@@ -20,3 +16,9 @@ services:
     ports:
       - 1025:1025
       - 1080:1080
+  queue:
+    image: rabbitmq:3-management
+    container_name: notifications_service_queue
+    ports:
+      - 5672:5672
+      - 15672:15672

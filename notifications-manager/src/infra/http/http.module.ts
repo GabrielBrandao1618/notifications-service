@@ -7,10 +7,29 @@ import { CountRecipientNotification } from '@application/use-cases/count-recipie
 import { GetRecipientNotifications } from '@application/use-cases/get-recipient-notifications';
 import { ReadNotification } from '@application/use-cases/read-notification';
 import { UnreadNotification } from '@application/use-cases/unread-notification';
+import { CreateRecipient } from '@application/use-cases/create-recipient';
+import { RecipientsController } from './controllers/recipients.controller';
+import {
+  ClientProxyFactory,
+  ClientsModule,
+  Transport,
+} from '@nestjs/microservices';
 
 @Module({
-  imports: [DatabaseModule],
-  controllers: [NotificationsController],
+  imports: [
+    DatabaseModule,
+    ClientsModule.register([
+      {
+        name: 'create-notification-service',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'create-notification',
+        },
+      },
+    ]),
+  ],
+  controllers: [NotificationsController, RecipientsController],
   providers: [
     SendNotification,
     CancelNotification,
@@ -18,6 +37,17 @@ import { UnreadNotification } from '@application/use-cases/unread-notification';
     GetRecipientNotifications,
     ReadNotification,
     UnreadNotification,
+    CreateRecipient,
+    {
+      provide: 'create-notification-service',
+      useValue: ClientProxyFactory.create({
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'create-notification',
+        },
+      }),
+    },
   ],
 })
 export class HttpModule {}

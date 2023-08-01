@@ -12,9 +12,17 @@ model Notification {
   content     String
   category    String
   readAt      DateTime?
+  recipient   Recipient @relation(fields: [recipientId], references: [id])
   recipientId String
   createdAt   DateTime  @default(now())
-  canceledAt DateTime?
+  canceledAt  DateTime?
 
   @@index([recipientId])
+}
+
+model Recipient {
+  id           String         @id
+  name         String
+  email        String
+  Notification Notification[]
 }

@@ -1,3 +1,5 @@
+import { Recipient } from '@application/entities/recipient';
+import { RecipientsRepository } from '@application/repositories/recipients-repository';
 import { Injectable } from '@nestjs/common';
 import { Content } from '../entities/content';
 import { Notification } from '../entities/notification';
@@ -10,11 +12,15 @@ interface SendNotificationRequest {
 }
 interface SendNotificationResponse {
   notification: Notification;
+  recipient: Recipient;
 }
 
 @Injectable()
 export class SendNotification {
-  constructor(public notificationsRepository: NotificationsRepository) {}
+  constructor(
+    private readonly notificationsRepository: NotificationsRepository,
+    private readonly recipientsRepository: RecipientsRepository,
+  ) {}
   async do(
     request: SendNotificationRequest,
   ): Promise<SendNotificationResponse> {
@@ -27,10 +33,19 @@ export class SendNotification {
       createdAt: new Date(),
     });
 
+    const targetRecipient = await this.recipientsRepository.findById(
+      recipientId,
+    );
+
+    if (!targetRecipient) {
+      throw new Error('Recipient not found');
+    }
+
     await this.notificationsRepository.create(notification);
 
     return {
       notification: notification,
+      recipient: targetRecipient,
     };
   }
 }
